@@ -90,25 +90,25 @@ python main.py
 ```text
 tower_defence_tut/
 ├── README.md                          # Tài liệu hướng dẫn dự án
-├── Part 13/                           # Phiên bản game hoàn chỉnh nhất
-│   ├── main.py                        # Vòng lặp chính, xử lý game loop, sự kiện & Shop UI
-│   ├── menu.py                        # Giao diện Menu chính, hiệu ứng hạt & bảng hướng dẫn
-│   ├── turret.py                      # Lớp Turret: quản lý tháp, xoay nòng, 3 nhánh nâng cấp & bán
-│   ├── turret_data.py                 # Cấu hình chỉ số gốc & cây 3 nhánh nâng cấp (UPGRADE_PATHS)
-│   ├── enemy.py                       # Lớp Enemy: di chuyển theo waypoints, thanh máu & làm chậm
-│   ├── enemy_data.py                  # Dữ liệu xuất hiện của quái vật qua từng wave
-│   ├── world.py                       # Quản lý thế giới, nạp dữ liệu map & đếm quái
-│   ├── effects.py                     # Quản lý hiệu ứng đồ họa chiến đấu (nổ lan, laser, sóng băng)
-│   ├── constants.py                   # Các hằng số cài đặt màn hình, máu, tiền & FPS
-│   ├── button.py                      # Lớp Button xử lý nút bấm cơ bản
-│   ├── generate_turret_sprites.py     # Script tạo đồ họa spritesheet cho 4 loại tháp mới
-│   ├── enhance_map.py                 # Script vẽ & hoàn thiện bản đồ 3D chi tiết
-│   ├── assets/                        # Tài nguyên âm thanh, hình ảnh quái & giao diện
-│   │   ├── audio/                     # Âm thanh bắn súng
-│   │   └── images/                    # Sprite quái, nút bấm, GUI và tháp mới
-│   │       └── new_turrets/           # Spritesheet của Gunner, Bomb, Ice, Sniper
-│   └── levels/                        # Bản đồ game (level.png, level.tmj)
-└── Part 1 -> Part 12/                 # Các phần bài học từ cơ bản đến nâng cao
+├── .gitignore                         # Danh sách file và thư mục bỏ qua (cache, v.v.)
+└── Part 13/                           # Phiên bản game hoàn chỉnh nhất
+    ├── main.py                        # Vòng lặp chính, xử lý game loop, sự kiện & Shop UI
+    ├── menu.py                        # Giao diện Menu chính, hiệu ứng hạt & bảng hướng dẫn
+    ├── turret.py                      # Lớp Turret: quản lý tháp, xoay nòng, 3 nhánh nâng cấp & bán
+    ├── turret_data.py                 # Cấu hình chỉ số gốc & cây 3 nhánh nâng cấp (UPGRADE_PATHS)
+    ├── enemy.py                       # Lớp Enemy: di chuyển theo waypoints, thanh máu & làm chậm
+    ├── enemy_data.py                  # Dữ liệu xuất hiện của quái vật qua từng wave
+    ├── world.py                       # Quản lý thế giới, nạp dữ liệu map & đếm quái
+    ├── effects.py                     # Quản lý hiệu ứng đồ họa chiến đấu (nổ lan, laser, sóng băng)
+    ├── constants.py                   # Các hằng số cài đặt màn hình, máu, tiền & FPS
+    ├── button.py                      # Lớp Button xử lý nút bấm cơ bản
+    ├── generate_turret_sprites.py     # Script tạo đồ họa spritesheet cho 4 loại tháp mới
+    ├── enhance_map.py                 # Script vẽ & hoàn thiện bản đồ 3D chi tiết
+    ├── assets/                        # Tài nguyên âm thanh, hình ảnh quái & giao diện
+    │   ├── audio/                     # Âm thanh bắn súng
+    │   └── images/                    # Sprite quái, nút bấm, GUI và tháp mới
+    │       └── new_turrets/           # Spritesheet của Gunner, Bomb, Ice, Sniper
+    └── levels/                        # Bản đồ game (level.png, level.tmj)
 ```
 
 ---
