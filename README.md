@@ -40,6 +40,20 @@ Thay thế khu vực logo cũ bằng **Bảng điều khiển 3 hướng nâng c
 - **Nút Fast Forward x2 (Toggle)**: Nhấp chuột một lần để bật hoặc tắt duy trì tốc độ gấp đôi, không cần đè chuột.
 - **Phím tắt `SPACE`**: Bắt đầu trận đấu hoặc bật/tắt nhanh tốc độ 2X.
 
+### 6. 👑 Hệ Thống 40 Đợt Quái & Đại Chiến Siêu Trùm (Waves 10, 20, 30, 40)
+Mở rộng chiến dịch lên đến **40 Wave** đầy thử thách với các Siêu Trùm mang cơ chế chiến đấu độc đáo:
+
+| Cột Mốc | Tên Trùm | Máu (HP) | Kỹ Năng & Cơ Chế Đặc Biệt | Tiền Thưởng |
+| :---: | :--- | :---: | :--- | :---: |
+| **Wave 10** | 🗿 **`TITAN GOLEM`** | 750 | **Thạch Giáp**: Kháng 45% làm chậm. Khi chết phân tách thành 3 Mini Rock Golem. | **+150$** |
+| **Wave 20** | 🚀 **`INFERNAL DREADNOUGHT`** | 2,800 | **Cuồng Nộ (Enrage)**: Dưới 45% máu tăng +35% tốc độ. Khi chết phân tách thành 2 Mini Dread & 2 Mini Golem. | **+350$** |
+| **Wave 30** | 🔮 **`VOID OVERLORD`** | 8,000 | **Triệu Hồi Hư Không**: Cứ mỗi 4.5s triệu hồi 2 bóng ma Hư Không siêu tốc (`Void Phantom`). Hào quang kháng 65% CC. | **+750$** |
+| **Wave 40** | 🐉 **`CHAOS LEVIATHAN`** | 20,000 | **Cổ Long Diệt Thế (Final Boss)**: 20K HP, kháng 75% CC, cuồng nộ tàn phá. Đánh bại để mở khóa CHIẾN THẮNG TUYỆT ĐỐI! | **+1,500$** |
+
+- **👑 Thanh Máu Trùm Hoàng Gia (Top Boss Health Bar)**: Thanh máu dài 420px xuất hiện trên đỉnh màn hình với tên trùm, danh hiệu, hiệu ứng cuồng nộ và số máu thực tế.
+- **⚠️ Biển Cảnh Báo Chiến Trường (Warning Banner)**: Nhấp nháy sọc đỏ cảnh báo nguy cấp khi đợt trùm bắt đầu.
+- **💥 Hiệu Ứng Nổ & Rung Màn Hình**: Hiệu ứng sóng nổ đa tầng hoành tráng và rung chấn nhẹ khi hạ gục trùm.
+
 ---
 
 ## 🛠️ Yêu Cầu & Cài Đặt

@@ -284,11 +284,11 @@ class GameMenu:
     surface.blit(c_title, (modal_x + 40, ctrl_y))
 
     tips = [
-      "• Chuột trái vào Thẻ Tháp bên phải để chọn mua, rồi click vào ô Cỏ để đặt tháp.",
-      "• Khi rê chuột đặt tháp: Vòng tròn tầm bắn thực tế sẽ hiển thị giúp bạn căn vị trí.",
-      "• Chuột phải: Hủy chế độ đặt tháp hoặc bỏ chọn tháp đang chọn.",
-      "• Nâng cấp tháp: Click vào tháp đã đặt rồi bấm nút [UPGRADE] để tăng sức mạnh lên Lv.4!",
-      "• Mẹo: Kết hợp Tháp Băng (làm chậm) + Tháp Pháo (nổ lan) để khắc chế mọi đợt quái vật!"
+      "• Đặt & Nâng cấp tháp: Mua tháp từ Shop, click tháp trên sân để nâng cấp 3 nhánh chuyên sâu.",
+      "• Nút Bán Tháp (💰 SELL): Thu hồi lại 70% tổng tiền đã đầu tư để tái cơ cấu đội hình.",
+      "• Phím SPACE: Bắt đầu đợt mới hoặc bật/tắt tốc độ 2X. Phím ESC: Tạm dừng về Menu.",
+      "• 👑 CẢNH BÁO TRÙM (WAVE 10, 20, 30, 40): Xuất hiện Siêu Trùm có thanh máu khủng,",
+      "  kháng khống chế và kỹ năng đặc biệt (Phân tách quái con, Cuồng nộ, Triệu hồi Hư Không)!"
     ]
 
     tip_y = ctrl_y + 28

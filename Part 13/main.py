@@ -38,6 +38,7 @@ placing_turrets = False
 selected_turret_type = "gunner"
 selected_turret = None
 effects = []
+boss_warning_timer = 0
 
 #load images
 #map
@@ -56,7 +57,14 @@ enemy_images = {
   "weak": pg.image.load('assets/images/enemies/enemy_1.png').convert_alpha(),
   "medium": pg.image.load('assets/images/enemies/enemy_2.png').convert_alpha(),
   "strong": pg.image.load('assets/images/enemies/enemy_3.png').convert_alpha(),
-  "elite": pg.image.load('assets/images/enemies/enemy_4.png').convert_alpha()
+  "elite": pg.image.load('assets/images/enemies/enemy_4.png').convert_alpha(),
+  "void_phantom": pg.image.load('assets/images/enemies/void_phantom.png').convert_alpha(),
+  "boss_minion_golem": pg.image.load('assets/images/enemies/boss_minion_golem.png').convert_alpha(),
+  "boss_minion_dread": pg.image.load('assets/images/enemies/boss_minion_dread.png').convert_alpha(),
+  "boss_titan": pg.image.load('assets/images/enemies/boss_titan.png').convert_alpha(),
+  "boss_dreadnought": pg.image.load('assets/images/enemies/boss_dreadnought.png').convert_alpha(),
+  "boss_overlord": pg.image.load('assets/images/enemies/boss_overlord.png').convert_alpha(),
+  "boss_leviathan": pg.image.load('assets/images/enemies/boss_leviathan.png').convert_alpha()
 }
 
 #buttons
@@ -99,14 +107,21 @@ def draw_text(text, font, text_col, x, y):
 
 def display_data():
   #draw panel top
-  pg.draw.rect(screen, "maroon", (c.SCREEN_WIDTH, 0, c.SIDE_PANEL, 365))
-  pg.draw.rect(screen, "grey0", (c.SCREEN_WIDTH, 0, c.SIDE_PANEL, 365), 2)
-  #display data
-  draw_text("LV: " + str(world.level), text_font, "grey100", c.SCREEN_WIDTH + 10, 12)
-  screen.blit(heart_image, (c.SCREEN_WIDTH + 10, 40))
-  draw_text(str(world.health), text_font, "grey100", c.SCREEN_WIDTH + 50, 44)
-  screen.blit(coin_image, (c.SCREEN_WIDTH + 10, 68))
-  draw_text(str(world.money), text_font, "grey100", c.SCREEN_WIDTH + 50, 72)
+  pg.draw.rect(screen, (34, 18, 24), (c.SCREEN_WIDTH, 0, c.SIDE_PANEL, 365))
+  pg.draw.rect(screen, (70, 42, 54), (c.SCREEN_WIDTH, 0, c.SIDE_PANEL, 365), 2)
+  #display wave info with Boss indicator
+  wave_color = (255, 215, 60) if world.has_boss_this_wave() else "grey100"
+  draw_text(f"WAVE: {world.level}/{c.TOTAL_LEVELS}", text_font, wave_color, c.SCREEN_WIDTH + 10, 12)
+  if world.has_boss_this_wave():
+    pg.draw.rect(screen, (200, 35, 35), (c.SCREEN_WIDTH + 145, 11, 140, 24), border_radius=6)
+    pg.draw.rect(screen, (255, 220, 60), (c.SCREEN_WIDTH + 145, 11, 140, 24), 1, border_radius=6)
+    b_tag = micro_font.render("👑 BOSS WAVE", True, (255, 255, 255))
+    screen.blit(b_tag, (c.SCREEN_WIDTH + 145 + (140 - b_tag.get_width()) // 2, 15))
+
+  screen.blit(heart_image, (c.SCREEN_WIDTH + 10, 44))
+  draw_text(str(world.health), text_font, "grey100", c.SCREEN_WIDTH + 50, 48)
+  screen.blit(coin_image, (c.SCREEN_WIDTH + 10, 74))
+  draw_text(str(world.money), text_font, "grey100", c.SCREEN_WIDTH + 50, 78)
   #draw in-game menu button
   in_game_menu_btn.draw(screen, pg.mouse.get_pos())
 
@@ -205,8 +220,9 @@ while run:
         game_over = True
         game_outcome = 1 #win
 
-      #update groups & effects
-      enemy_group.update(world)
+      #update groups & effects (snapshot list to handle dynamic minion/boss spawns)
+      for enemy in list(enemy_group):
+        enemy.update(world, enemy_group, effects, small_font)
       turret_group.update(enemy_group, world, effects)
 
       for effect in effects[:]:
@@ -220,16 +236,80 @@ while run:
     #draw level
     world.draw(screen)
 
+    #draw boss glowing auras beneath sprites
+    for enemy in enemy_group:
+      enemy.draw_aura(screen)
+
     #draw groups
     enemy_group.draw(screen)
     for enemy in enemy_group:
-      enemy.draw_health_bar(screen)
+      enemy.draw_health_bar(screen, small_font)
     for turret in turret_group:
       turret.draw(screen)
 
-    #draw attack visual effects (explosions, sniper lasers, ice rings)
+    #draw attack visual effects (explosions, sniper lasers, ice rings, boss blasts)
     for effect in effects:
       effect.draw(screen)
+
+    # Top-screen Boss Health Bar (if any boss is active on battlefield)
+    active_boss = None
+    for e in enemy_group:
+      if getattr(e, 'is_boss', False) and e.health > 0:
+        if active_boss is None or e.max_health > active_boss.max_health:
+          active_boss = e
+
+    if active_boss:
+      b_bar_w = 420
+      b_bar_h = 20
+      b_bar_x = (c.SCREEN_WIDTH - b_bar_w) // 2
+      b_bar_y = 18
+
+      # Dark background card
+      pg.draw.rect(screen, (15, 18, 25), (b_bar_x - 12, b_bar_y - 10, b_bar_w + 24, b_bar_h + 30), border_radius=10)
+      b_border = active_boss.aura_color if active_boss.aura_color else (255, 215, 0)
+      pg.draw.rect(screen, b_border, (b_bar_x - 12, b_bar_y - 10, b_bar_w + 24, b_bar_h + 30), 2, border_radius=10)
+
+      # Title & Subtitle
+      b_title_str = f"👑 {active_boss.boss_name} — {active_boss.boss_title}"
+      if active_boss.is_enraged:
+        b_title_str += " [🔥 CUỒNG NỘ]"
+      b_title_surf = small_font.render(b_title_str, True, (255, 220, 80))
+      screen.blit(b_title_surf, (b_bar_x + (b_bar_w - b_title_surf.get_width()) // 2, b_bar_y - 6))
+
+      # Health Fill
+      hp_ratio = max(0.0, active_boss.health / active_boss.max_health)
+      pg.draw.rect(screen, (40, 12, 18), (b_bar_x, b_bar_y + 14, b_bar_w, b_bar_h), border_radius=5)
+      fill_w = int(b_bar_w * hp_ratio)
+      fill_col = (255, 190, 40) if hp_ratio > 0.4 else (255, 50, 40)
+      if active_boss.is_enraged:
+        fill_col = (255, 40, 20)
+      pg.draw.rect(screen, fill_col, (b_bar_x, b_bar_y + 14, fill_w, b_bar_h), border_radius=5)
+      pg.draw.rect(screen, (255, 240, 180), (b_bar_x, b_bar_y + 14, b_bar_w, b_bar_h), 1, border_radius=5)
+
+      # Text
+      hp_txt = f"{int(active_boss.health):,} / {int(active_boss.max_health):,} HP ({int(hp_ratio * 100)}%)"
+      hp_surf = micro_font.render(hp_txt, True, (255, 255, 255))
+      screen.blit(hp_surf, (b_bar_x + (b_bar_w - hp_surf.get_width()) // 2, b_bar_y + 18))
+
+    # Flashing Boss Wave Warning Alert Banner
+    if pg.time.get_ticks() < boss_warning_timer:
+      flash_on = (pg.time.get_ticks() // 250) % 2 == 0
+      b_info = world.get_boss_info_this_wave()
+      b_name = b_info.get("boss_name", "SIÊU TRÙM") if b_info else "SIÊU TRÙM"
+      b_title = b_info.get("boss_title", "") if b_info else ""
+
+      bw_surf = pg.Surface((c.SCREEN_WIDTH, 66), pg.SRCALPHA)
+      bw_surf.fill((20, 8, 12, 225))
+      pg.draw.line(bw_surf, (255, 60, 40) if flash_on else (255, 200, 40), (0, 0), (c.SCREEN_WIDTH, 0), 3)
+      pg.draw.line(bw_surf, (255, 60, 40) if flash_on else (255, 200, 40), (0, 64), (c.SCREEN_WIDTH, 64), 3)
+      for wx in range(0, c.SCREEN_WIDTH, 40):
+        pg.draw.line(bw_surf, (90, 20, 25, 90), (wx, 0), (wx + 20, 66), 8)
+      screen.blit(bw_surf, (0, 180))
+
+      txt_warn = small_font.render("⚠️ CẢNH BÁO: TRÙM CHIẾN TRƯỜNG XUẤT HIỆN! ⚠️", True, (255, 220, 50) if flash_on else (255, 80, 60))
+      screen.blit(txt_warn, ((c.SCREEN_WIDTH - txt_warn.get_width()) // 2, 188))
+      txt_sub = text_font.render(f"👑 ĐỢT {world.level}: {b_name} — {b_title}", True, (255, 255, 255))
+      screen.blit(txt_sub, ((c.SCREEN_WIDTH - txt_sub.get_width()) // 2, 212))
 
     #draw panel top stats
     display_data()
@@ -239,6 +319,8 @@ while run:
       if level_started == False:
         if begin_button.draw(screen):
           level_started = True
+          if world.has_boss_this_wave():
+            boss_warning_timer = pg.time.get_ticks() + 3800
       else:
         #fast forward toggle
         if fast_forward_button.draw(screen):
@@ -254,11 +336,12 @@ while run:
           draw_text("▶ 1X (TẮT)", tiny_font, (180, 190, 205), c.SCREEN_WIDTH + 110, 332)
         #spawn enemies
         if pg.time.get_ticks() - last_enemy_spawn > c.SPAWN_COOLDOWN:
-          if world.spawned_enemies < len(world.enemy_list):
-            enemy_type = world.enemy_list[world.spawned_enemies]
+          if world.spawned_count < len(world.spawn_queue):
+            enemy_type = world.spawn_queue[world.spawned_count]
             enemy = Enemy(enemy_type, world.waypoints, enemy_images)
             enemy_group.add(enemy)
-            world.spawned_enemies += 1
+            world.spawned_count += 1
+            world.spawned_enemies = world.spawned_count
             last_enemy_spawn = pg.time.get_ticks()
 
       #check if wave is finished
@@ -266,6 +349,7 @@ while run:
         world.money += c.LEVEL_COMPLETE_REWARD
         world.level += 1
         level_started = False
+        boss_warning_timer = 0
         last_enemy_spawn = pg.time.get_ticks()
         world.reset_level()
         world.process_enemies()
@@ -458,12 +542,16 @@ while run:
 
     else:
       # Game Over / Win Dialog
-      pg.draw.rect(screen, "dodgerblue", (200, 180, 400, 240), border_radius = 24)
-      pg.draw.rect(screen, "grey100", (200, 180, 400, 240), 2, border_radius = 24)
+      pg.draw.rect(screen, (24, 28, 40), (180, 170, 440, 250), border_radius = 24)
+      border_theme = (255, 215, 0) if game_outcome == 1 else (230, 60, 60)
+      pg.draw.rect(screen, border_theme, (180, 170, 440, 250), 3, border_radius = 24)
+      
       if game_outcome == -1:
-        draw_text("GAME OVER", large_font, "grey0", 310, 215)
+        draw_text("GAME OVER", large_font, (240, 70, 70), 310, 205)
+        draw_text("Quái vật đã xuyên thủng phòng tuyến!", small_font, (200, 210, 225), 235, 250)
       elif game_outcome == 1:
-        draw_text("YOU WIN!", large_font, "grey0", 315, 215)
+        draw_text("VICTORY!", large_font, (255, 215, 0), 320, 200)
+        draw_text("👑 ĐÃ QUÉT SẠCH 40 ĐỢT QUÁI & TẤT CẢ TRÙM! 👑", small_font, (120, 240, 140), 205, 248)
       
       # Restart button
       if restart_button.draw(screen):
@@ -472,6 +560,7 @@ while run:
         placing_turrets = False
         selected_turret = None
         effects.clear()
+        boss_warning_timer = 0
         last_enemy_spawn = pg.time.get_ticks()
         world = World(world_data, map_image)
         world.process_data()
@@ -522,6 +611,8 @@ while run:
       if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
         if not level_started:
           level_started = True
+          if world.has_boss_this_wave():
+            boss_warning_timer = pg.time.get_ticks() + 3800
         else:
           fast_forward = not fast_forward
 
